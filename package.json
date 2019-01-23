@@ -1,0 +1,43 @@
+{
+  "name": "fingera-node-style",
+  "version": "1.0.0",
+  "description": "description",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint src",
+    "debug": "nodemon --exec babel-node src/index.js",
+    "build": "babel src --out-dir lib --no-comments",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fingera/node-style.git"
+  },
+  "keywords": [
+    "keywords"
+  ],
+  "author": "liuyujun@fingera.cn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fingera/node-style/issues"
+  },
+  "homepage": "https://github.com/fingera/node-style#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "babel-plugin-minify-constant-folding": "^0.5.0",
+    "babel-plugin-minify-dead-code-elimination": "^0.5.0",
+    "babel-plugin-minify-guarded-expressions": "^0.4.3",
+    "babel-plugin-minify-mangle-names": "^0.5.0",
+    "babel-plugin-minify-simplify": "^0.5.0",
+    "babel-plugin-transform-merge-sibling-variables": "^6.9.4",
+    "babel-preset-minify": "^0.5.0",
+    "eslint": "^5.12.1",
+    "eslint-config-google": "^0.11.0",
+    "eslint-config-prettier": "^3.6.0",
+    "nodemon": "^1.18.9",
+    "prettier": "^1.16.1"
+  }
+}
