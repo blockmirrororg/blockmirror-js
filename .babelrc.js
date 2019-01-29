@@ -9,12 +9,4 @@ module.exports = {
     ],
     ["minify"],
   ],
-  plugins: [
-    "minify-constant-folding",
-    "minify-dead-code-elimination",
-    "minify-guarded-expressions",
-    "minify-mangle-names",
-    "minify-simplify",
-    "transform-merge-sibling-variables",
-  ],
 };
