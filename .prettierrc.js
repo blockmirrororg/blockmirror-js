@@ -10,5 +10,5 @@ module.exports = {
   jsxBracketSameLine: true,
   arrowParens: "always",
   requirePragma: false,
-  insertPragma: false
+  insertPragma: false,
 };
