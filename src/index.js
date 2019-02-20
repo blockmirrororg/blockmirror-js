@@ -1,4 +1,4 @@
-import * as utf8 from "./utf8";
-
-export default utf8;
-
+let i = 0;
+setInterval(() => {
+  console.log(`tick ${i++}`);
+}, 1000);

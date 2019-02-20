@@ -1,4 +1,4 @@
-import { encode, decode, decodeBuf, valid } from "../utf8";
+const { encode, decode, decodeBuf, valid } = require("../utf8");
 
 const testcase = [
   // https://en.wikipedia.org/wiki/UTF-8

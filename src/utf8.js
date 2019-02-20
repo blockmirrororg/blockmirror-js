@@ -15,7 +15,7 @@
  * @param {Array} [bytesArray = []] - pushable bytes array
  * @return {Array} same as second parameter
  */
-export function encode(str, bytesArray = []) {
+function encode(str, bytesArray = []) {
   for (let i = 0; i < str.length; i++) {
     const c = str.charCodeAt(i);
     if (c < 0x80) {
@@ -56,7 +56,7 @@ export function encode(str, bytesArray = []) {
  * @param {Array} bytes - input bytes array
  * @return {String}
  */
-export function decode(bytes) {
+function decode(bytes) {
   return decodeBuf(
     {
       bytes,
@@ -74,7 +74,7 @@ export function decode(bytes) {
  * @param {Integer} limit string limit
  * @return {String}
  */
-export function decodeBuf(buf, limit) {
+function decodeBuf(buf, limit) {
   const codeUnits = [];
   let result = "";
   const { bytes } = buf;
@@ -146,7 +146,7 @@ export function decodeBuf(buf, limit) {
  * @param {Array} bytes
  * @return {Boolean}
  */
-export function valid(bytes) {
+function valid(bytes) {
   const { length } = bytes;
   for (let i = 0; i < length; i++) {
     const byte = bytes[i];
@@ -177,3 +177,10 @@ export function valid(bytes) {
   }
   return true;
 }
+
+module.exports = {
+  encode,
+  decode,
+  decodeBuf,
+  valid,
+};
