@@ -1,5 +1,5 @@
 const Encode = require("./encode");
-const secp256k1 = require("secp256k1");
+const { PrivateKey, Signature } = require("eosjs-ecc");
 const sha256 = require("js-sha256");
 /**
  * 构造各种交易
@@ -24,6 +24,22 @@ class TransactionGenerator {
         Encode.unhex(buffer, trx.script.value.target);
         Encode.encodeUInt(buffer, trx.script.value.amount);
         break;
+      case 1: // BPJion
+      case 2: // BPLeave
+        Encode.unhex(buffer, trx.script.value.bp);
+        break;
+      case 3: // NewFormat
+        Encode.encString(buffer, trx.script.value.name);
+        Encode.encString(buffer, trx.script.value.desc);
+        Encode.encString(buffer, trx.script.value.dataFormat);
+        Encode.encString(buffer, trx.script.value.validScript);
+        Encode.encString(buffer, trx.script.value.resultScript);
+        break;
+      case 4: // NewDataType
+        Encode.encString(buffer, trx.script.value.format);
+        Encode.encString(buffer, trx.script.value.name);
+        Encode.encString(buffer, trx.script.value.desc);
+        break;
       // FIXME: 实现其他的类型
       default:
         throw new Error("bad script type");
@@ -37,13 +53,16 @@ class TransactionGenerator {
     hash.update(buffer);
 
     // FIXME: 这个库用的签名算法不一致 以后改
-    const sig = secp256k1.sign(new Uint8Array(hash.array()), new Uint8Array(key));
+    const signature = Signature.sign(
+      Buffer.from(hash.array()),
+      Buffer.from(key),
+    );
 
-    const signature = secp256k1.signatureNormalize(sig.signature);
+    // const signature = ecc.signatureNormalize(sig.signature);
 
     trx.signatures.push({
-      signer: secp256k1.publicKeyCreate(new Uint8Array(key)).toString("hex"),
-      signature: Encode.hex(signature),
+      signer: new PrivateKey(Buffer.from(key)).toPublic().toHex().toUpperCase(),
+      signature: signature.toHex().toUpperCase(),
     });
   }
   /**
@@ -77,16 +96,164 @@ class TransactionGenerator {
     this.addSignature(trx, signer);
     return trx;
   }
+
+  /**
+   * 创建加入BP的交易
+   * @param {String[]} signers 发起的BP私钥
+   * @param {String} bp 要加入的BP
+   * @param {Integer} expire 过期高度
+   * @param {Integer} nonce 随机数
+   * @return {Object} 交易
+   */
+  createBPJoin(
+    signers,
+    bp,
+    expire,
+    nonce = Math.floor(Math.random() * 0x100000000),
+  ) {
+    const trx = {
+      expire,
+      nonce,
+      script: {
+        type: 1,
+        value: {
+          bp,
+        },
+      },
+      signatures: [],
+    };
+
+    signers.forEach((o) => this.addSignature(trx, o));
+    return trx;
+  }
+
+  /**
+   * 创建剔除BP交易
+   * @param {String[]} signers 发起的BP私钥
+   * @param {String} bp 要离开的BP
+   * @param {Integer} expire 过期高度
+   * @param {Integer} nonce 随机数
+   * @return {Object} 交易
+   */
+  createBPLeave(
+    signers,
+    bp,
+    expire,
+    nonce = Math.floor(Math.random() * 0x100000000),
+  ) {
+    const trx = {
+      expire,
+      nonce,
+      script: {
+        type: 2,
+        value: {
+          bp,
+        },
+      },
+      signatures: [],
+    };
+    signers.forEach((o) => this.addSignature(trx, o));
+    return trx;
+  }
+
+  /**
+   * 添加数据格式交易
+   * @param {String[]} signers 发起的BP私钥
+   * @param {Object} type 数据类型
+   * @param {Integer} expire 过期高度
+   * @param {Integer} nonce 随机数
+   * @return {Object} 交易
+   */
+  createNewFormat(
+    signers,
+    type,
+    expire,
+    nonce = Math.floor(Math.random() * 0x100000000),
+  ) {
+    const trx = {
+      expire,
+      nonce,
+      script: {
+        type: 3,
+        value: type,
+      },
+      signatures: [],
+    };
+    signers.forEach((o) => this.addSignature(trx, o));
+    return trx;
+  }
+
+  /**
+   * 创建数据类型交易
+   * @param {String[]} signers 发起的BP私钥
+   * @param {Object} formater 格式对象
+   * @param {Integer} expire 过期时间
+   * @param {Integer} nonce 随机数
+   * @return {Object} 交易
+   */
+  createNewDataType(
+    signers,
+    formater,
+    expire,
+    nonce = Math.floor(Math.random() * 0x100000000),
+  ) {
+    const trx = {
+      expire,
+      nonce,
+      script: {
+        type: 4,
+        value: formater,
+      },
+      signatures: [],
+    };
+    signers.forEach((o) => this.addSignature(trx, o));
+    return trx;
+  }
 }
 
 const Generator = new TransactionGenerator();
 
+const bp1Priv = "068972C2BB42DF301DA05BBCEF718A8516FA03F10DC62BA5A08223516B99F200"
+const bp2Priv = "9DC54FB3E7493E97D7B9130DAB4CC75275DE02199FD19E4A4CBDBEF539F6D496"
+
+const bp3Priv = PrivateKey.fromHex("B19375F1D6A3CC299C27DD6F793E91234B6E8CA9692131E6E8F320B83F84FF2C");
+
+const bp3Pub = bp3Priv.toPublic().toHex().toUpperCase();
+
+// console.log(
+//   JSON.stringify(Generator.createTransfer(bp1Priv, bp3Pub, 1000000, 2, 0)),
+// );
 console.log(
-  Generator.createTransfer(
-    "32CD6A9C3B4D58C06606513A7C630307C3E08A42599C54BDB17D5C81EC847B9E",
-    "0213E21D6D3A4D64994E938F51A128861DEA7395A456C08F62A4549DF904D4B525",
-    1000000,
-    2,
-    0,
-  ),
+  JSON.stringify(Generator.createBPJoin([bp1Priv, bp2Priv], bp3Pub, 2, 3470473166)),
 );
+// console.log(
+//   JSON.stringify(Generator.createBPLeave([bp1Priv, bp2Priv], bp3Pub, 2, 0)),
+// );
+// console.log(
+//   JSON.stringify(
+//     Generator.createNewFormat(
+//       [bp1Priv, bp2Priv],
+//       {
+//         name: "stock",
+//         desc: "股票类型的描述",
+//         dataFormat: "0101010101",
+//         validScript: "01",
+//         resultScript: "02",
+//       },
+//       2,
+//       0,
+//     ),
+//   ),
+// );
+// console.log(
+//  JSON.stringify( Generator.createNewDataType(
+//     [bp1Priv, bp2Priv],
+//     {
+//       format: "stock",
+//       name: "alibaba",
+//       desc: "",
+//     },
+//     2,
+//     0,
+//   ),
+// ));

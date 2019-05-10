@@ -55,7 +55,7 @@ class Encode {
     }
   }
   /**
-   * HEX解码
+   * HEX编码
    * @param {Array} buffer 
    * @return {String}
    */
@@ -85,6 +85,52 @@ class Encode {
       high = high >>> 7;
     }
     buffer.push(low);
+  }
+
+  /**
+   * UTF8解码
+   * @param {Array} buffer 
+   * @param {String} str 
+   */
+  encString(buffer,str){
+    if (str === undefined) {
+      str = DEFAULT_STRING;
+    }
+    this.encodeUInt(buffer, str.length);
+    
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+  
+      if (c < 0x80) {  // 7 [U+0000, U+007F]
+        buffer.push(c);   // 0xxxxxxx 7
+      } else if (c < 0x800) {        // 11 [U+0080, U+07FF]
+        buffer.push((c >> 6) | 0xC0);   // 110xxxxx 5
+        buffer.push((c & 0x3F) | 0x80); // 10xxxxxx 6
+      } else if (c < 0x10000) {
+        if (c >= 0xD800 && c <= 0xDBFF) {
+          i++;
+          if (i >= str.length) {
+            throw new Error("illegal utf8: L overflow");
+          }
+          const second = str.charCodeAt(i);
+          if (second >= 0xDC00 && second <= 0xDFFF) {
+            // 10000->110000 c[40, 440) second[0, 400]
+            const cc = ((c - 0xD7C0) << 10) + (second - 0xDC00);
+                                                   // 21 [U+10000, U+10FFFF]
+            buffer.push((cc >> 18) | 0xF0);           // 11110xxx 3
+            buffer.push(((cc >> 12) & 0x3F ) | 0x80); // 10xxxxxx 6
+            buffer.push(((cc >> 6) & 0x3F) | 0x80);   // 10xxxxxx 6
+            buffer.push((cc & 0x3F) | 0x80);          // 10xxxxxx 6
+          } else {
+            throw new Error("illegal utf8: invalid L");
+          }
+        } else {                              // 16 [U+0800, U+FFFF]
+          buffer.push((c >> 12) | 0xE0);         // 1110xxxx 4
+          buffer.push(((c >> 6) & 0x3F) | 0x80); // 10xxxxxx 6
+          buffer.push((c & 0x3F) | 0x80);        // 10xxxxxx 6
+        }
+      }
+    }
   }
 }
 
