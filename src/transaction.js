@@ -1,5 +1,5 @@
 const Encode = require("./encode");
-const { PrivateKey, Signature } = require("eosjs-ecc");
+const secp256k1 = require('secp256k1')
 const sha256 = require("js-sha256");
 /**
  * 构造各种交易
@@ -44,8 +44,8 @@ class TransactionGenerator {
       default:
         throw new Error("bad script type");
     }
-    const key = [];
-    Encode.unhex(key, signer);
+
+    const key = Buffer.from(signer,'hex')
 
     if (key.length !== 32) throw new Error("bad private key");
 
@@ -53,16 +53,14 @@ class TransactionGenerator {
     hash.update(buffer);
 
     // FIXME: 这个库用的签名算法不一致 以后改
-    const signature = Signature.sign(
+    const signature = secp256k1.sign(
       Buffer.from(hash.array()),
       Buffer.from(key),
     );
 
-    // const signature = ecc.signatureNormalize(sig.signature);
-
     trx.signatures.push({
-      signer: new PrivateKey(Buffer.from(key)).toPublic().toHex().toUpperCase(),
-      signature: signature.toHex().toUpperCase(),
+      signer: secp256k1.publicKeyCreate(key).toString('hex').toUpperCase(),
+      signature: signature.signature.toString('hex').toUpperCase(),
     });
   }
   /**
@@ -216,9 +214,8 @@ const Generator = new TransactionGenerator();
 const bp1Priv = "068972C2BB42DF301DA05BBCEF718A8516FA03F10DC62BA5A08223516B99F200"
 const bp2Priv = "9DC54FB3E7493E97D7B9130DAB4CC75275DE02199FD19E4A4CBDBEF539F6D496"
 
-const bp3Priv = PrivateKey.fromHex("B19375F1D6A3CC299C27DD6F793E91234B6E8CA9692131E6E8F320B83F84FF2C");
-
-const bp3Pub = bp3Priv.toPublic().toHex().toUpperCase();
+const bp3Priv = "B19375F1D6A3CC299C27DD6F793E91234B6E8CA9692131E6E8F320B83F84FF2C"
+const bp3Pub = secp256k1.publicKeyCreate(Buffer.from(bp3Priv, 'hex')).toString('hex').toUpperCase()
 
 // console.log(
 //   JSON.stringify(Generator.createTransfer(bp1Priv, bp3Pub, 1000000, 2, 0)),
