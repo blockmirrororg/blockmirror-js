@@ -60,7 +60,7 @@ class TransactionGenerator {
 
     trx.signatures.push({
       signer: secp256k1.publicKeyCreate(key).toString('hex').toUpperCase(),
-      signature: signature.signature.toString('hex').toUpperCase(),
+      signature: signature.toString('hex').toUpperCase(),
     });
   }
   /**
@@ -217,40 +217,40 @@ const bp2Priv = "9DC54FB3E7493E97D7B9130DAB4CC75275DE02199FD19E4A4CBDBEF539F6D49
 const bp3Priv = "B19375F1D6A3CC299C27DD6F793E91234B6E8CA9692131E6E8F320B83F84FF2C"
 const bp3Pub = secp256k1.publicKeyCreate(Buffer.from(bp3Priv, 'hex')).toString('hex').toUpperCase()
 
-// console.log(
-//   JSON.stringify(Generator.createTransfer(bp1Priv, bp3Pub, 1000000, 2, 0)),
-// );
+console.log(
+  JSON.stringify(Generator.createTransfer(bp1Priv, bp3Pub, 1000000, 2, 0)),
+);
 console.log(
   JSON.stringify(Generator.createBPJoin([bp1Priv, bp2Priv], bp3Pub, 2, 3470473166)),
 );
-// console.log(
-//   JSON.stringify(Generator.createBPLeave([bp1Priv, bp2Priv], bp3Pub, 2, 0)),
-// );
-// console.log(
-//   JSON.stringify(
-//     Generator.createNewFormat(
-//       [bp1Priv, bp2Priv],
-//       {
-//         name: "stock",
-//         desc: "股票类型的描述",
-//         dataFormat: "0101010101",
-//         validScript: "01",
-//         resultScript: "02",
-//       },
-//       2,
-//       0,
-//     ),
-//   ),
-// );
-// console.log(
-//  JSON.stringify( Generator.createNewDataType(
-//     [bp1Priv, bp2Priv],
-//     {
-//       format: "stock",
-//       name: "alibaba",
-//       desc: "",
-//     },
-//     2,
-//     0,
-//   ),
-// ));
+console.log(
+  JSON.stringify(Generator.createBPLeave([bp1Priv, bp2Priv], bp3Pub, 2, 0)),
+);
+console.log(
+  JSON.stringify(
+    Generator.createNewFormat(
+      [bp1Priv, bp2Priv],
+      {
+        name: "stock",
+        desc: "股票类型的描述",
+        dataFormat: "0101010101",
+        validScript: "01",
+        resultScript: "02",
+      },
+      2,
+      0,
+    ),
+  ),
+);
+console.log(
+ JSON.stringify( Generator.createNewDataType(
+    [bp1Priv, bp2Priv],
+    {
+      format: "stock",
+      name: "alibaba",
+      desc: "",
+    },
+    2,
+    0,
+  ),
+));
