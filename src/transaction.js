@@ -1,6 +1,7 @@
 const Encode = require("./encode");
-const secp256k1 = require('secp256k1')
+const secp256k1 = require("secp256k1");
 const sha256 = require("js-sha256");
+const axios = require("./axios");
 /**
  * 构造各种交易
  */
@@ -45,7 +46,7 @@ class TransactionGenerator {
         throw new Error("bad script type");
     }
 
-    const key = Buffer.from(signer,'hex')
+    const key = Buffer.from(signer, "hex");
 
     if (key.length !== 32) throw new Error("bad private key");
 
@@ -59,8 +60,11 @@ class TransactionGenerator {
     );
 
     trx.signatures.push({
-      signer: secp256k1.publicKeyCreate(key).toString('hex').toUpperCase(),
-      signature: signature.toString('hex').toUpperCase(),
+      signer: secp256k1
+        .publicKeyCreate(key)
+        .toString("hex")
+        .toUpperCase(),
+      signature: signature.toString("hex").toUpperCase(),
     });
   }
   /**
@@ -211,17 +215,58 @@ class TransactionGenerator {
 
 const Generator = new TransactionGenerator();
 
-const bp1Priv = "068972C2BB42DF301DA05BBCEF718A8516FA03F10DC62BA5A08223516B99F200"
-const bp2Priv = "9DC54FB3E7493E97D7B9130DAB4CC75275DE02199FD19E4A4CBDBEF539F6D496"
+const bp1Priv =
+  "068972C2BB42DF301DA05BBCEF718A8516FA03F10DC62BA5A08223516B99F200";
+const bp2Priv =
+  "9DC54FB3E7493E97D7B9130DAB4CC75275DE02199FD19E4A4CBDBEF539F6D496";
 
-const bp3Priv = "B19375F1D6A3CC299C27DD6F793E91234B6E8CA9692131E6E8F320B83F84FF2C"
-const bp3Pub = secp256k1.publicKeyCreate(Buffer.from(bp3Priv, 'hex')).toString('hex').toUpperCase()
+const bp3Priv =
+  "B19375F1D6A3CC299C27DD6F793E91234B6E8CA9692131E6E8F320B83F84FF2C";
+const bp3Pub = secp256k1
+  .publicKeyCreate(Buffer.from(bp3Priv, "hex"))
+  .toString("hex")
+  .toUpperCase();
+
+
+describe("Add and Get Tranction", () => {
+  test("Add Tranction res with succ", async () => {
+    await expect(
+      axios.post(
+        "put_tranction",
+        JSON.stringify(Generator.createNewDataType()),
+      ),
+    ).rejects.toThrow("error");
+  });
+
+  test("Get Tranction res with tranction", () => {
+    expect(isValidCityFoodPair("San Juan", "Mofongo")).toBe(true);
+  });
+});
+
+describe("Add and Get dataType", () => {
+  test("Add dataType res with succ", async () => {
+    await expect(
+      axios.post(
+        "put_tranction",
+        JSON.stringify(
+          Generator.createTransfer(bp1Priv, bp3Pub, 1000000, 2, 0),
+        ),
+      ),
+    ).rejects.toThrow("error");
+  });
+
+  test("Get dataType res with dataType", () => {
+    expect(isValidCityFoodPair("San Juan", "Mofongo")).toBe(true);
+  });
+});
 
 console.log(
   JSON.stringify(Generator.createTransfer(bp1Priv, bp3Pub, 1000000, 2, 0)),
 );
 console.log(
-  JSON.stringify(Generator.createBPJoin([bp1Priv, bp2Priv], bp3Pub, 2, 3470473166)),
+  JSON.stringify(
+    Generator.createBPJoin([bp1Priv, bp2Priv], bp3Pub, 2, 3470473166),
+  ),
 );
 console.log(
   JSON.stringify(Generator.createBPLeave([bp1Priv, bp2Priv], bp3Pub, 2, 0)),
@@ -243,14 +288,16 @@ console.log(
   ),
 );
 console.log(
- JSON.stringify( Generator.createNewDataType(
-    [bp1Priv, bp2Priv],
-    {
-      format: "stock",
-      name: "alibaba",
-      desc: "",
-    },
-    2,
-    0,
+  JSON.stringify(
+    Generator.createNewDataType(
+      [bp1Priv, bp2Priv],
+      {
+        format: "stock",
+        name: "alibaba",
+        desc: "",
+      },
+      2,
+      0,
+    ),
   ),
-));
+);
