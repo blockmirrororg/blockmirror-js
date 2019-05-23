@@ -35,6 +35,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "js-sha256": "^0.9.0",
-    "secp256k1": "git+https://github.com/fingera/secp256k1-node.git"
+    "lodash": "^4.17.11",
+    "secp256k1": "git+https://github.com/fingera/secp256k1-node.git",
+    "sina-finance": "0.0.4",
+    "tushare": "^0.3.1"
   }
 }
