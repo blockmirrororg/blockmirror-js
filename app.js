@@ -28,83 +28,101 @@ const bp3Pub = secp256k1
 // const bpLeave = Generator.createBPLeave([bp1Priv, bp2Priv], bp3Pub, 2, 0);
 
 (async () => {
-  // await axios.post(
-  //   "chain/transaction",
-  //   Generator.createNewFormat(
-  //     [bp1Priv],
-  //     {
-  //       name: "A股",
-  //       desc: "代表五个浮点 股价上限 下限 最高 最低 平均 ",
-  //       dataFormat: "0101010101",
-  //       validScript: "01",
-  //       resultScript: "02",
-  //     },
-  //     1000000,
-  //     0,
-  //   ),
-  // )
+  try {
+    await axios.post(
+      "chain/transaction",
+      Generator.createNewFormat(
+        [bp1Priv],
+        {
+          name: "A股",
+          desc: "代表五个浮点 股价上限 下限 最高 最低 平均 ",
+          dataFormat: "0101010101",
+          validScript: "01",
+          resultScript: "02",
+        },
+        1000000,
+        0,
+      ),
+    );
 
-  // await axios.post(
-  //   "chain/transaction",
-  //   Generator.createNewFormat(
-  //     [bp1Priv],
-  //     {
-  //       name: "美股",
-  //       desc: "代表五个浮点 股价上限 下限 最高 最低 平均 ",
-  //       dataFormat: "0101010101",
-  //       validScript: "01",
-  //       resultScript: "02",
-  //     },
-  //     1000000,
-  //     0,
-  //   ),
-  // )
+    await axios.post(
+      "chain/transaction",
+      Generator.createNewFormat(
+        [bp1Priv],
+        {
+          name: "美股",
+          desc: "代表五个浮点 股价上限 下限 最高 最低 平均 ",
+          dataFormat: "0101010101",
+          validScript: "01",
+          resultScript: "02",
+        },
+        1000000,
+        0,
+      ),
+    );
 
-  await axios.post(
-    "chain/transaction",
-    Generator.createNewDataType(
-      [bp1Priv],
-      {
-        format: "A股",
-        name: "sz000001",
-        desc: "国内某股票",
-      },
-      1000000,
-      0,
-    ),
-  );
+    await axios.post(
+      "chain/transaction",
+      Generator.createNewDataType(
+        [bp1Priv],
+        {
+          format: "A股",
+          name: "sz000001",
+          desc: "国内某股票",
+        },
+        1000000,
+        0,
+      ),
+    );
 
-  await axios.post(
-    "chain/transaction",
-    Generator.createNewDataType(
-      [bp1Priv],
-      {
-        format: "美股",
-        name: "aapl",
-        desc: "苹果的股票",
-      },
-      1000000,
-      0,
-    ),
-  );
+    await axios.post(
+      "chain/transaction",
+      Generator.createNewDataType(
+        [bp1Priv],
+        {
+          format: "A股",
+          name: "sh600000",
+          desc: "国内某股票",
+        },
+        1000000,
+        0,
+      ),
+    );
+
+    await axios.post(
+      "chain/transaction",
+      Generator.createNewDataType(
+        [bp1Priv],
+        {
+          format: "美股",
+          name: "aapl",
+          desc: "苹果的股票",
+        },
+        1000000,
+        0,
+      ),
+    );
+  } catch (error) {}
 
   stockEmitter.addListener("insert", async (data) => {
     // const res = await axios.post("/chain/transaction",newData);
     // console.log(res)
   });
 
-  sinaStockEmitter.addListener("insert", (datas) => {
-    datas.forEach((data) => {
+  sinaStockEmitter.addListener("insert", async (datas) => {
+    for (let i = 0; i < datas.length; i++) {
+      const data = datas[i];
       const args = [data.open, data.close, data.high, data.low, data.avg];
       const buf = Buffer.alloc(args.length * 4);
       for (let i = 0; i < args.length; i++) {
         buf.writeFloatBE(args[i], i * 4);
       }
-
-      axios.post("chain/data", {
-        name: data.code,
-        data: buf.toString("hex"),
-      });
-    });
+      try {
+        await axios.post("chain/data", {
+          name: data.code,
+          data: buf.toString("hex"),
+        });
+      } catch (error) {}
+    }
   });
 })();
