@@ -41,7 +41,7 @@ const fetch = () => {
       `当前时间${new Date().toLocaleString()},还没有到A股开市时间，不fetch数据！`
     )
   }
-  setTimeout(fetch, 30 * 1000)
+  setTimeout(fetch, 1 * 1000)
 }
 
 fetch()

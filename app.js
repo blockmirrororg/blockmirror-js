@@ -104,6 +104,21 @@ const bp3Pub = secp256k1
     );
   } catch (error) {}
 
+  const chainLast = await axios.get("chain/last");
+  console.log(JSON.stringify(chainLast));
+  const chainStatus = await axios.get("chain/status");
+  console.log(JSON.stringify(chainStatus));
+  const chainByHash = await axios.get("chain/block?" + chainLast.producer);
+  console.log(JSON.stringify(chainByHash));
+  const chainTransaction = await axios.get("chain/transaction?" + chainLast.producer);
+  console.log(JSON.stringify(chainTransaction));
+  const chainFormat = await axios.get("chain/format?A股");
+  console.log(JSON.stringify(chainFormat));
+  const chainDataType = await axios.get("chain/datatypes?sz000001");
+  console.log(JSON.stringify(chainDataType));
+  const chainBps = await axios.get("chain/bps");
+  console.log(JSON.stringify(chainBps));
+
   stockEmitter.addListener("insert", async (data) => {
     // const res = await axios.post("/chain/transaction",newData);
     // console.log(res)
