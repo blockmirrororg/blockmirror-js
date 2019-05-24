@@ -32,9 +32,9 @@ module.exports = class TransactionGenerator {
       case 3: // NewFormat
         Encode.encString(buffer, trx.script.value.name);
         Encode.encString(buffer, trx.script.value.desc);
-        Encode.encString(buffer, trx.script.value.dataFormat);
-        Encode.encString(buffer, trx.script.value.validScript);
-        Encode.encString(buffer, trx.script.value.resultScript);
+        Encode.vector(buffer, trx.script.value.dataFormat);
+        Encode.vector(buffer, trx.script.value.validScript);
+        Encode.vector(buffer, trx.script.value.resultScript);
         break;
       case 4: // NewDataType
         Encode.encString(buffer, trx.script.value.format);

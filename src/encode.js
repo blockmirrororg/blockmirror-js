@@ -55,6 +55,18 @@ class Encode {
     }
   }
   /**
+   * 
+   * @param {*} buffer 
+   * @param {*} hex 
+   */
+  vector(buffer, hex) {
+    const buf = [];
+    this.unhex(buf, hex);
+
+    this.encodeUInt(buffer, buf.length);
+    buffer.push(...buf);
+  }
+  /**
    * HEX编码
    * @param {Array} buffer 
    * @return {String}
@@ -89,14 +101,15 @@ class Encode {
 
   /**
    * UTF8解码
-   * @param {Array} buffer 
+   * @param {Array} outbuffer 
    * @param {String} str 
    */
-  encString(buffer,str){
+  encString(outbuffer,str){
     if (str === undefined) {
       str = DEFAULT_STRING;
     }
-    this.encodeUInt(buffer, str.length);
+    const buffer = [];
+    // this.encodeUInt(buffer, str.length);
     
     for (let i = 0; i < str.length; i++) {
       const c = str.charCodeAt(i);
@@ -131,6 +144,9 @@ class Encode {
         }
       }
     }
+
+    this.encodeUInt(outbuffer, buffer.length);
+    outbuffer.push(...buffer);
   }
 }
 
