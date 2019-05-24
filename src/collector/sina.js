@@ -8,6 +8,7 @@ const stockEmitter = new Emitter()
 const stockType = ['sz000001', 'sh600000']
 
 const timeFilter = time => {
+  return true;
   const currentHour = time.getHours()
   const currentMinutes = time.getMinutes()
   return (

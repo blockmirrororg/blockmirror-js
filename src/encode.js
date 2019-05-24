@@ -148,6 +148,45 @@ class Encode {
     this.encodeUInt(outbuffer, buffer.length);
     outbuffer.push(...buffer);
   }
+
+  /**
+   * 
+   * @param {*} arr 
+   * @param {*} value 
+   */
+  encDouble(arr, value) {
+    if (value === undefined) {
+      value = DEFAULT_DOUBLE;
+    } else if ((typeof value).toLowerCase() !== "number") {
+      throw new Error("invalid double: " + value);
+    }
+    let sign;
+    if (value < 0) {
+      sign = 1;
+      value = -value;
+    } else {
+      sign = 0;
+    }
+    if (value === 0) {
+      arr.push(0, 0, 0, 0, 0, 0, 0, 0); // +0
+    } else if (isNaN(value)) { // NaN
+      arr.push(0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F);
+    } else if (value > MAX_DOUBLE) { // Infinity
+      arr.push(0, 0, 0, 0, 0, 0, 0xF0, 0x7F | sign << 7);
+    } else if (value < MIN_DOUBLE) {
+      const mant = value / Math.pow(2, -1074);
+      const mantHigh = (mant / 0x100000000);
+      write_uint32(arr, mant >>> 0);
+      write_uint32(arr, ((sign << 31) | mantHigh) >>> 0);
+    } else {
+      let exp = Math.floor(Math.log(value) / Math.LN2);
+      if (exp == 1024) exp = 1023;
+      const mant = value * Math.pow(2, -exp);
+      const mantHigh = (mant * 0x100000) & 0xFFFFF;
+      write_uint32(arr, (mant * 0x10000000000000) >>> 0);
+      write_uint32(arr, ((sign << 31) | ((exp + 1023) << 20) | mantHigh) >>> 0);
+    }
+  }
 }
 
 module.exports = new Encode();
