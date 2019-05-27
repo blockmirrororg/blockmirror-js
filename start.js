@@ -1,6 +1,7 @@
 const spawn = require("child_process").spawn;
 const subProcess = spawn("bash");
 
+// eslint-disable-next-line require-jsdoc
 function onData(data) {
   process.stdout.write(data);
 }
@@ -10,6 +11,7 @@ subProcess.stderr.on("data", onData);
 
 subProcess.on("error", function() {
   console.log("error");
+  // eslint-disable-next-line prefer-rest-params
   console.log(arguments);
 });
 
