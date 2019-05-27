@@ -1,11 +1,23 @@
-const childProcess = require('child_process');
- 
-childProcess.exec('rm -rf ../running && mkdir ../running && cd "../running" && ../build/test/test_network ../config.json', function (error, stdout, stderr) {
-    if (error) {
-        console.log(error.stack);
-        console.log('Error code: '+error.code);
-        console.log('Signal received: '+error.signal);
-    }
-    console.log('stdout: ' + stdout);
-    console.log('stderr: ' + stderr);
+const spawn = require("child_process").spawn;
+const subProcess = spawn("bash");
+
+function onData(data) {
+  process.stdout.write(data);
+}
+
+subProcess.stdout.on("data", onData);
+subProcess.stderr.on("data", onData);
+
+subProcess.on("error", function() {
+  console.log("error");
+  console.log(arguments);
 });
+
+subProcess.on("close", (code) => {
+  console.log(`子进程退出码：${code}`);
+});
+
+subProcess.stdin.write("rm -rf ../running \n");
+subProcess.stdin.write("mkdir ../running \n");
+subProcess.stdin.write("cd ../running \n");
+subProcess.stdin.write("../build/test/test_network ../config.json \n");
