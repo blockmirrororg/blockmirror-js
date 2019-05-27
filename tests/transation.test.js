@@ -35,7 +35,7 @@ test("test for chain/transaction post NewFormat 'A股' and get", async () => {
     ),
   ).toEqual({});
 
-  const format = await axios.get("chain/format?A股");
+  const format = await axios.get(`chain/format?${encodeURIComponent("A股")}`);
   expect(format).toHaveProperty("name", "A股");
 });
 
