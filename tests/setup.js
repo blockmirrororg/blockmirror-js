@@ -8,7 +8,11 @@ const bp1Priv =
 
 module.exports = async function() {
   console.log("Initializing blockmirror tests");
-  spawn.sync("rm", ["-rf", "../running"], { stdio: "inherit" });
+  const rmCommand =
+    process.platform === "win32"
+      ? ["rmdir", ["../running", "/s/q"]]
+      : ["rm", ["-rf", "../running"]];
+  spawn.sync(rmCommand[0], rmCommand[1], { stdio: "inherit" });
   spawn.sync("mkdir", ["../running"], { stdio: "inherit" });
   const rpc = await spawn("../build/test/test_network", ["../config.json"], {
     stdio: "inherit",
