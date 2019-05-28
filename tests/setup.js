@@ -3,8 +3,7 @@ const axios = require("../src/axios");
 const Transaction = require("../src/transaction");
 
 const Generator = new Transaction();
-const bp1Priv =
-  "95D4B0DF5B1069B47F35C8C7A6764BB8B760D0359B6C1221DDCB46CE5830E14C";
+const bp1Priv = "95D4B0DF5B1069B47F35C8C7A6764BB8B760D0359B6C1221DDCB46CE5830E14C";
 
 module.exports = async function() {
   console.log("Initializing blockmirror tests");
