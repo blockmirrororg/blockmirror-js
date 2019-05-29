@@ -26,10 +26,7 @@ test("test for post chain/data", async () => {
   for (let i = 0; i < args.length; i++) {
     buf.writeFloatLE(args[i], i * 4)
   }
-  console.log(JSON.stringify({
-    name: "sz000001",
-    data: buf.toString("hex"),
-  }))
+
   expect(
     await axios.post(
       "chain/data",
@@ -38,5 +35,5 @@ test("test for post chain/data", async () => {
         data: buf.toString("hex"),
       }),
     ),
-  ).toHaveReturned();
+  ).toEqual({});
 });
