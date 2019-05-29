@@ -13,7 +13,7 @@ sinaStockEmitter.addListener("insert", async (datas) => {
     const args = [data.open, data.close, data.high, data.low, data.avg];
     const buf = Buffer.alloc(args.length * 4);
     for (let i = 0; i < args.length; i++) {
-      buf.writeFloatBE(args[i], i * 4);
+      buf.writeFloatLE(args[i], i * 4);
     }
     try {
       await axios.post("chain/data", {
