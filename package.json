@@ -7,7 +7,7 @@
     "startBlockmirrorRpc": "node startBlockmirrorRpc.js",
     "lint": "eslint src",
     "test": "jest",
-    "debug": "nodemon src/index.js"
+    "debug": "jest"
   },
   "repository": {
     "type": "git",

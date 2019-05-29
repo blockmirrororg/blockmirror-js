@@ -4,8 +4,8 @@ axios.interceptors.request.use(
   function(config) {
     config.headers = {
       "content-type": "application/json",
-      "Authorization": "hashyouxi",
-    }
+      Authorization: "hashyouxi",
+    };
     config.baseURL = "http://localhost:8080/";
     config.timeout = 3000;
     return config;
@@ -21,8 +21,11 @@ axios.interceptors.response.use(
     return response.data;
   },
   function(error) {
-    console.log(`response error: ${error.message}`);
-    return Promise.reject(error);
+    let errorMsg = `response status: ${error.message};`;
+    if (error.response && error.response.data) {
+      errorMsg += `response msg:${JSON.stringify(error.response.data)}`;
+    }
+    return Promise.reject(new Error(errorMsg));
   },
 );
 

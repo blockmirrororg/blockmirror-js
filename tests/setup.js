@@ -32,8 +32,9 @@ module.exports = async function() {
 
 // eslint-disable-next-line require-jsdoc
 async function beforeAll() {
+  let format
   try {
-    const format = Generator.createNewFormat(
+    format = Generator.createNewFormat(
       [bp1Priv],
       {
         name: "A股",
@@ -65,8 +66,9 @@ async function beforeAll() {
     throw new Error("beforAll失败！");
   }
 
+  let dataType
   try {
-    const dataType = Generator.createNewDataType(
+    dataType = Generator.createNewDataType(
       [bp1Priv],
       {
         format: "A股",
