@@ -1,6 +1,7 @@
 const spawn = require("cross-spawn");
 const axios = require("../src/axios");
 const Transaction = require("../src/transaction");
+const StockList = require("../StockList");
 
 const Generator = new Transaction();
 const bp1Priv =
@@ -40,8 +41,8 @@ async function beforeAll() {
       [bp1Priv],
       {
         name: "A股",
-        desc: "代表五个浮点 股价上限 下限 最高 最低 平均 ",
-        dataFormat: "0101010101",
+        desc: "float 当前价格 ",
+        dataFormat: "01",
         validScript: "01",
         resultScript: "02",
       },
@@ -69,34 +70,37 @@ async function beforeAll() {
   }
 
   let dataType;
-  try {
-    dataType = Generator.createNewDataType(
-      [bp1Priv],
-      {
-        format: "A股",
-        name: "sz000001",
-        desc: "国内某股票",
-      },
-      1000000,
-      0,
-    );
+  for (let i = 0; i < StockList.china.length; i++) {
+    const type = StockList.china[i];
+    try {
+      dataType = Generator.createNewDataType(
+        [bp1Priv],
+        {
+          format: "A股",
+          name: type.symbol,
+          desc: type.name,
+        },
+        1000000,
+        0,
+      );
 
-    await axios.post("chain/transaction", JSON.stringify(dataType));
+      await axios.post("chain/transaction", JSON.stringify(dataType));
 
-    console.log({
-      at: "beforeAll",
-      action: "post DataType",
-      status: "successed",
-      context: JSON.stringify(dataType),
-    });
-  } catch (error) {
-    console.log({
-      at: "beforeAll",
-      action: "post DataType",
-      status: "error",
-      message: error.message,
-      context: JSON.stringify(dataType),
-    });
-    throw new Error("beforAll失败！");
+      console.log({
+        at: "beforeAll",
+        action: "post DataType",
+        status: "successed",
+        context: JSON.stringify(dataType),
+      });
+    } catch (error) {
+      console.log({
+        at: "beforeAll",
+        action: "post DataType",
+        status: "error",
+        message: error.message,
+        context: JSON.stringify(dataType),
+      });
+      throw new Error("beforAll失败！");
+    }
   }
 }

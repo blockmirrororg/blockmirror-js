@@ -21,10 +21,10 @@ test("test for get chain/bps ", async () => {
 });
 
 test("test for post chain/data", async () => {
-  const args = [110.22, 115.1, 160.2, 100.3, 130.22];
+  const args = [110.22];
   const buf = Buffer.alloc(args.length * 4);
   for (let i = 0; i < args.length; i++) {
-    buf.writeFloatLE(args[i], i * 4)
+    buf.writeFloatLE(args[i], i * 4);
   }
 
   expect(
@@ -36,4 +36,30 @@ test("test for post chain/data", async () => {
       }),
     ),
   ).toEqual({});
+});
+
+test("test for get chain/datatype ", async () => {
+  const datatypes = await axios.get(
+    `chain/datatype?${encodeURIComponent("A股")}`,
+  );
+  expect(datatypes).toEqual([
+    {
+      format: "A股",
+      name: "sz000001",
+      desc: "中国平安",
+    },
+  ]);
+});
+
+test("test for get chain/formats ", async () => {
+  const datatypes = await axios.get(`chain/formats`);
+  expect(datatypes).toEqual([
+    {
+      name: "A股",
+      desc: "float 当前价格 ",
+      dataFormat: "01",
+      validScript: "01",
+      resultScript: "02",
+    },
+  ]);
 });
