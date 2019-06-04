@@ -2,6 +2,7 @@ const spawn = require("cross-spawn");
 const axios = require("../src/axios");
 const Transaction = require("../src/transaction");
 const StockList = require("../StockList");
+const Format = require("../Format");
 
 const Generator = new Transaction();
 const bp1Priv =
@@ -36,37 +37,26 @@ module.exports = async function() {
 // eslint-disable-next-line require-jsdoc
 async function beforeAll() {
   let format;
-  try {
-    format = Generator.createNewFormat(
-      [bp1Priv],
-      {
-        name: "A股",
-        desc: "float 当前价格 ",
-        dataFormat: "01",
-        validScript: "01",
-        resultScript: "02",
-      },
-      1000000,
-      0,
-    );
-
-    await axios.post("chain/transaction", JSON.stringify(format));
-
-    console.log({
-      at: "beforeAll",
-      action: "post Format",
-      status: "successed",
-      context: JSON.stringify(format),
-    });
-  } catch (error) {
-    console.log({
-      at: "beforeAll",
-      action: "post NewFormat",
-      status: "error",
-      message: error.message,
-      context: JSON.stringify(format),
-    });
-    throw new Error("beforAll失败！");
+  for (let i = 0; i < Format.length; i++) {
+    try {
+      format = Generator.createNewFormat([bp1Priv], Format[i], 1000000, 0);
+      await axios.post("chain/transaction", JSON.stringify(format));
+      console.log({
+        at: "beforeAll",
+        action: "post Format",
+        status: "successed",
+        context: JSON.stringify(format),
+      });
+    } catch (error) {
+      console.log({
+        at: "beforeAll",
+        action: "post NewFormat",
+        status: "error",
+        message: error.message,
+        context: JSON.stringify(format),
+      });
+      throw new Error("beforAll失败！");
+    }
   }
 
   let dataType;

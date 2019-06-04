@@ -13,7 +13,7 @@ const startUp = require("./tests/setup");
   sinaStockEmitter.addListener("insert", async (datas) => {
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
-      const args = [data.avg];
+      const args = [data.crrentPrice];
       const buf = Buffer.alloc(args.length * 4);
       for (let i = 0; i < args.length; i++) {
         buf.writeFloatLE(args[i], i * 4);
