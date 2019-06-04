@@ -8,13 +8,12 @@ const stockEmitter = new Emitter();
 const stockType = StockList.china.map((o) => o.code);
 
 const timeFilter = (time) => {
-  return true;
   const currentHour = time.getHours();
   const currentMinutes = time.getMinutes();
   return (
     (currentHour === 9 && currentMinutes >= 30) ||
     (currentHour > 9 && currentHour < 11) ||
-    (currentHour > 13 && currentHour < 15) ||
+    (currentHour >= 13 && currentHour <= 15) ||
     (currentHour === 11 && currentMinutes <= 30)
   );
 };
