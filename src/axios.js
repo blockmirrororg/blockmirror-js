@@ -6,7 +6,7 @@ axios.interceptors.request.use(
       "content-type": "application/json",
       Authorization: "hashyouxi",
     };
-    config.baseURL = "http://localhost:8080/";
+    config.baseURL = "http://localhost:8099/";
     config.timeout = 3000;
     return config;
   },
