@@ -20,9 +20,8 @@ function start(stockCode) {
         break;
       case WebSocket.OPEN:
         ws.ticket++;
-        if (ws.ticket === 60) {
+        if ((ws.ticket % 60) === 0) {
           ws.ping();
-          ws.pong();
         }
         // 根据数据生成报告
         // console.log(ws.ticket);
