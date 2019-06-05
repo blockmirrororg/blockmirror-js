@@ -24,13 +24,12 @@ const fetch = () => {
     axios
       .get(stockListUrl)
       .then((data) => {
-        data = data.data;
         if (data.result.error_code) throw new Error(data.reason);
         data.result.data.forEach((e) => {
           e.time = currentTime.getTime();
         });
 
-        result = data.result.data
+        const result = data.result.data
           .map((o) => stockAdapter(o))
           .filter((o) => stockType.includes(o.code));
 
