@@ -62,35 +62,49 @@ async function beforeAll() {
   let dataType;
   for (let i = 0; i < StockList.china.length; i++) {
     const type = StockList.china[i];
-    try {
-      dataType = Generator.createNewDataType(
-        [bp1Priv],
-        {
-          format: "A股",
-          name: type.symbol,
-          desc: type.name,
-        },
-        1000000,
-        0,
-      );
+    dataType = Generator.createNewDataType(
+      [bp1Priv],
+      {
+        format: "A股",
+        name: type.symbol,
+        desc: type.name,
+      },
+      1000000,
+      0,
+    );
 
-      await axios.post("chain/transaction", JSON.stringify(dataType));
+    await axios.post("chain/transaction", JSON.stringify(dataType));
+  }
 
-      console.log({
-        at: "beforeAll",
-        action: "post DataType",
-        status: "successed",
-        context: JSON.stringify(dataType),
-      });
-    } catch (error) {
-      console.log({
-        at: "beforeAll",
-        action: "post DataType",
-        status: "error",
-        message: error.message,
-        context: JSON.stringify(dataType),
-      });
-      throw new Error("beforAll失败！");
-    }
+  for (let i = 0; i < StockList.US.length; i++) {
+    const type = StockList.US[i];
+    dataType = Generator.createNewDataType(
+      [bp1Priv],
+      {
+        format: "美股",
+        name: type.symbol,
+        desc: type.name,
+      },
+      1000000,
+      0,
+    );
+
+    await axios.post("chain/transaction", JSON.stringify(dataType));
+  }
+
+  for (let i = 0; i < StockList.HK.length; i++) {
+    const type = StockList.HK[i];
+    dataType = Generator.createNewDataType(
+      [bp1Priv],
+      {
+        format: "港股",
+        name: type.symbol,
+        desc: type.name,
+      },
+      1000000,
+      0,
+    );
+
+    await axios.post("chain/transaction", JSON.stringify(dataType));
   }
 }

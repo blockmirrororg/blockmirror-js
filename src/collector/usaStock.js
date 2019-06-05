@@ -1,12 +1,13 @@
 const axios = require('axios')
 const Emitter = require('events')
+const StockList = require("../../StockList");
 
-const { stockAdapter } = require('./adapter/juhe')
+const { stockAdapter } = require('./adapter/juheUSA')
 
 const stockListUrl = `http://web.juhe.cn:8080/finance/stock/usaall?key=7807c70f8ca32b8080ef7a81b1f43552&page=1&type=3`
 const stockEmitter = new Emitter()
 
-const stockType = ['AAPL', 'MSFT', 'AMZN', 'GOOGL']
+const stockType = StockList.US.map((o) => o.symbol);
 
 const timeFilter = time => {
   const currentHour = time.getHours()
@@ -35,8 +36,6 @@ const fetch = () => {
           .filter(o => stockType.includes(o.code))
 
         stockEmitter.emit('insert', result)
-
-        console.log(`fetch stocklist ${data.result.totalCount}`)
       })
       .catch(err => {
         console.log(err.message)
@@ -46,7 +45,7 @@ const fetch = () => {
       `当前时间${new Date().toLocaleString()},还没有到美股开市时间，不fetch数据！`
     )
   }
-  setTimeout(fetch, 180 * 1000)
+  setTimeout(fetch, 200 * 1000)
 }
 
 fetch()
