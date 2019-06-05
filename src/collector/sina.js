@@ -13,7 +13,7 @@ const timeFilter = (time) => {
   return (
     (currentHour === 9 && currentMinutes >= 30) ||
     (currentHour > 9 && currentHour < 11) ||
-    (currentHour >= 13 && currentHour <= 15) ||
+    (currentHour >= 13 && currentHour < 15) ||
     (currentHour === 11 && currentMinutes <= 30)
   );
 };
