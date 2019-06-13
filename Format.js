@@ -19,5 +19,12 @@ module.exports = [
     dataFormat: "01",
     validScript: "01",
     resultScript: "02",
+  },
+  {
+    name: "数字货币",
+    desc: "float美元价格 float人民币价格",
+    dataFormat: "0101",
+    validScript: "01",
+    resultScript: "02",
   }
 ];

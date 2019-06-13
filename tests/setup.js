@@ -2,6 +2,7 @@ const spawn = require("cross-spawn");
 const axios = require("../src/axios");
 const Transaction = require("../src/transaction");
 const StockList = require("../StockList");
+const CoinList = require("../CoinList");
 const Format = require("../Format");
 
 const Generator = new Transaction();
@@ -100,6 +101,22 @@ async function beforeAll() {
         format: "港股",
         name: type.symbol,
         desc: type.name,
+      },
+      1000000,
+      0,
+    );
+
+    await axios.post("chain/transaction", JSON.stringify(dataType));
+  }
+
+  for (let i = 0; i < CoinList.length; i++) {
+    const coinName = CoinList[i];
+    dataType = Generator.createNewDataType(
+      [bp1Priv],
+      {
+        format: "数字货币",
+        name: coinName,
+        desc: coinName,
       },
       1000000,
       0,
