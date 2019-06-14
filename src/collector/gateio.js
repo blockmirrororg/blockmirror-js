@@ -3,7 +3,7 @@ const CoinCodes = require("../../CoinList");
 const CCXT = require("ccxt");
 
 const coinEmitter = new Emitter();
-const gateio = new CCXT.gateio();
+const gateio = new CCXT.huobipro();
 
 setInterval(async () => {
   const data = await gateio.fetchTickers();
