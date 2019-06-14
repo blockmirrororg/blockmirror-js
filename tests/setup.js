@@ -1,4 +1,3 @@
-const spawn = require("cross-spawn");
 const axios = require("../src/axios");
 const Transaction = require("../src/transaction");
 const StockList = require("../StockList");
@@ -12,25 +11,12 @@ const bp1Priv =
 module.exports = async function() {
   console.log("Initializing blockmirror tests");
 
-  spawn.sync("rm", ["-rf", "../running"], {
-    stdio: "inherit",
-  });
-  spawn.sync("mkdir", ["../running"], {
-    stdio: "inherit",
-  });
-  const rpc = await spawn("../build/test/test_network", ["../config.json"], {
-    stdio: "inherit",
-    cwd: "../running",
-    detached: true,
-  });
-
   await new Promise((resolve) => setTimeout(resolve, 1000));
   try {
     await beforeAll();
     await new Promise((resolve) => setTimeout(resolve, 1000));
   } catch (error) {
     console.log(error.message);
-    process.kill(-rpc.pid);
     throw new Error();
   }
 };

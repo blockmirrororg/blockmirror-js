@@ -6,7 +6,7 @@ axios.interceptors.request.use(
       "content-type": "application/json",
       Authorization: "hashyouxi",
     };
-    config.baseURL = "http://localhost:8099/";
+    config.baseURL = "http://dk.fingera.cn:8099/";
     config.timeout = 3000;
     return config;
   },
