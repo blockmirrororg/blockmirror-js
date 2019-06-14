@@ -1,5 +1,6 @@
 const spawn = require("child_process").spawn;
 const subProcess = spawn("bash");
+const setup = require("./tests/setup");
 
 // eslint-disable-next-line require-jsdoc
 function onData(data) {
@@ -23,3 +24,7 @@ subProcess.stdin.write("rm -rf ../running \n");
 subProcess.stdin.write("mkdir ../running \n");
 subProcess.stdin.write("cd ../running \n");
 subProcess.stdin.write("../build/test/test_network ../config.json \n");
+
+async () => {
+  await setup();
+};

@@ -2,11 +2,9 @@ const axios = require("./src/axios");
 const usaStockEmitter = require("./src/collector/usaStock");
 const hkStockEmitter = require("./src/collector/hkStock");
 const sinaStockEmitter = require("./src/collector/sina");
-const startUp = require("./tests/setup");
-const coinEmitter = require('./src/collector/gateio');
+const coinEmitter = require("./src/collector/gateio");
 
 (async () => {
-  await startUp();
   usaStockEmitter.addListener("insert", (datas) => {
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
@@ -45,7 +43,7 @@ const coinEmitter = require('./src/collector/gateio');
     }
   });
 
-  sinaStockEmitter.addListener("insert", (datas) => {
+  sinaStockEmitter.addListener("insert", async (datas) => {
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
       const args = [data.crrentPrice];
@@ -67,7 +65,7 @@ const coinEmitter = require('./src/collector/gateio');
   coinEmitter.addListener("insert", (datas) => {
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
-      const args = [data.data];
+      const args = data.data;
       const buf = Buffer.alloc(args.length * 4);
       for (let i = 0; i < args.length; i++) {
         buf.writeFloatLE(args[i], i * 4);
