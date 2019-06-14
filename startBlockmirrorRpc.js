@@ -25,6 +25,6 @@ subProcess.stdin.write("mkdir ../running \n");
 subProcess.stdin.write("cd ../running \n");
 subProcess.stdin.write("../build/test/test_network ../config.json \n");
 
-async () => {
+(async () => {
   await setup();
-};
+})();
