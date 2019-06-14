@@ -17,7 +17,6 @@ module.exports = async function() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   } catch (error) {
     console.log(error.message);
-    throw new Error();
   }
 };
 
@@ -42,7 +41,6 @@ async function beforeAll() {
         message: error.message,
         context: JSON.stringify(format),
       });
-      throw new Error("beforAll失败！");
     }
   }
 
