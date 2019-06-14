@@ -5,7 +5,7 @@ const CCXT = require("ccxt");
 const coinEmitter = new Emitter();
 const gateio = new CCXT.gateio();
 
-setInterval(async () => {
+const fetch = async() => {
   const data = await gateio.fetchTickers();
   const result = CoinCodes.map((o) => {
     return {
@@ -14,7 +14,11 @@ setInterval(async () => {
     };
   });
   coinEmitter.emit("insert", result);
-}, 1000);
+  setTimeout(fetch, 1 * 1000);
+};
+
+(async()=>await fetch())()
+
 
 module.exports = {
   addListener(event, listener) {
