@@ -63,6 +63,7 @@ const coinEmitter = require("./src/collector/gateio");
   });
 
   coinEmitter.addListener("insert", (datas) => {
+    console.log(`从gateio获取到数字货币数据：${JSON.stringify(datas)}`);
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
       const args = data.data;
