@@ -6,23 +6,25 @@ const coinEmitter = new Emitter();
 const ex = new CCXT.binance();
 const gateio = new CCXT.gateio();
 
-const fetch = async () => {
-
-  const data = await ex.fetchTickers();
-  const rmbPrice = await gateio.fetchTicker("USDT/CNYX");
-
-  const result = CoinCodes.map((o) => {
-    return {
-      code: o,
-      data: [data[`${o}/USDT`].ask, rmbPrice.ask * data[`${o}/USDT`].ask],
-    };
-  });
-  coinEmitter.emit("insert", result);
-  await new Promise((resolve) => setTimeout(resolve, 10));
-  await fetch();
-};
-
-(async () => await fetch())();
+setInterval(async () => {
+  let data;
+  let rmbPrice;
+  try {
+    data = await ex.fetchTickers();
+    rmbPrice = await gateio.fetchTicker("USDT/CNYX");
+    const result = CoinCodes.map((o) => {
+      return {
+        code: o,
+        data: [data[`${o}/USDT`].ask, rmbPrice.ask * data[`${o}/USDT`].ask],
+      };
+    });
+    coinEmitter.emit("insert", result);
+  } catch (error) {
+    setTimeout(() => {
+      throw new Error(error.message);
+    });
+  }
+}, 1000);
 
 module.exports = {
   addListener(event, listener) {
