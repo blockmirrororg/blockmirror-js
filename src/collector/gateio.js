@@ -15,12 +15,13 @@ const fetch = async () => {
       data: [data[`${o}/USDT`].ask, rmbPrice.ask * data[`${o}/USDT`].ask],
     };
   });
-  console.log(result)
+  console.log(result);
   coinEmitter.emit("insert", result);
-  setTimeout(fetch, 1 * 1000);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await fetch();
 };
 
-(async () => await fetch())();
+(async () => fetch())();
 
 module.exports = {
   addListener(event, listener) {

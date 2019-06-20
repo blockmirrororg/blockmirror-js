@@ -5,7 +5,7 @@ const sinaStockEmitter = require("./src/collector/sina");
 const coinEmitter = require("./src/collector/gateio");
 
 (async () => {
-  usaStockEmitter.addListener("insert", (datas) => {
+  usaStockEmitter.addListener("insert", async (datas) => {
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
       const args = [data.crrentPrice];
@@ -14,17 +14,20 @@ const coinEmitter = require("./src/collector/gateio");
         buf.writeFloatLE(args[i], i * 4);
       }
       try {
-        axios.post("chain/data", {
-          name: data.code,
-          data: buf.toString("hex"),
-        });
+        await axios.post(
+          "chain/data",
+          JSON.stringify({
+            name: data.code,
+            data: buf.toString("hex"),
+          }),
+        );
       } catch (error) {
         console.log(error.message);
       }
     }
   });
 
-  hkStockEmitter.addListener("insert", (datas) => {
+  hkStockEmitter.addListener("insert", async (datas) => {
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
       const args = [data.crrentPrice];
@@ -33,10 +36,13 @@ const coinEmitter = require("./src/collector/gateio");
         buf.writeFloatLE(args[i], i * 4);
       }
       try {
-        axios.post("chain/data", {
-          name: data.code,
-          data: buf.toString("hex"),
-        });
+        await axios.post(
+          "chain/data",
+          JSON.stringify({
+            name: data.code,
+            data: buf.toString("hex"),
+          }),
+        );
       } catch (error) {
         console.log(error.message);
       }
@@ -52,18 +58,20 @@ const coinEmitter = require("./src/collector/gateio");
         buf.writeFloatLE(args[i], i * 4);
       }
       try {
-        axios.post("chain/data", {
-          name: data.code,
-          data: buf.toString("hex"),
-        });
+        await axios.post(
+          "chain/data",
+          JSON.stringify({
+            name: data.code,
+            data: buf.toString("hex"),
+          }),
+        );
       } catch (error) {
         console.log(error.message);
       }
     }
   });
 
-  coinEmitter.addListener("insert", (datas) => {
-    console.log(`从gateio获取到数字货币数据：${JSON.stringify(datas)}`);
+  coinEmitter.addListener("insert", async (datas) => {
     for (let i = 0; i < datas.length; i++) {
       const data = datas[i];
       const args = data.data;
@@ -72,10 +80,13 @@ const coinEmitter = require("./src/collector/gateio");
         buf.writeFloatLE(args[i], i * 4);
       }
       try {
-        axios.post("chain/data", {
-          name: data.code,
-          data: buf.toString("hex"),
-        });
+        await axios.post(
+          "chain/data",
+          JSON.stringify({
+            name: data.code,
+            data: buf.toString("hex"),
+          }),
+        );
       } catch (error) {
         console.log(error.message);
       }
