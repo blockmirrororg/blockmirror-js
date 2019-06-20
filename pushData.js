@@ -2,7 +2,7 @@ const axios = require("./src/axios");
 const usaStockEmitter = require("./src/collector/usaStock");
 const hkStockEmitter = require("./src/collector/hkStock");
 const sinaStockEmitter = require("./src/collector/sina");
-const coinEmitter = require("./src/collector/gateio");
+const coinEmitter = require("./src/collector/marketData");
 
 (async () => {
   usaStockEmitter.addListener("insert", async (datas) => {
