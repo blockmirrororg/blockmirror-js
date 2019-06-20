@@ -92,10 +92,4 @@ const coinEmitter = require("./src/collector/gateio");
       }
     }
   });
-
-  coinEmitter.addListener("error", (error) => {
-    console.log(error.message);
-    throw new Error();
-  });
-  
 })();
