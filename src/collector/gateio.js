@@ -5,6 +5,7 @@ const CCXT = require("ccxt");
 const coinEmitter = new Emitter();
 const ex = new CCXT.binance();
 const gateio = new CCXT.gateio();
+let count = 0
 
 const fetch = async () => {
   const data = await ex.fetchTickers();
@@ -15,13 +16,13 @@ const fetch = async () => {
       data: [data[`${o}/USDT`].ask, rmbPrice.ask * data[`${o}/USDT`].ask],
     };
   });
-  console.log(result);
+  console.log(count++)
   coinEmitter.emit("insert", result);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   await fetch();
 };
 
-(async () => fetch())();
+(async () => await fetch())();
 
 module.exports = {
   addListener(event, listener) {
