@@ -1,16 +1,14 @@
 const WS = require("ws");
-const Depth = require("./Depth");
 const Emitter = require("events");
 const CoinCodes = require("../../CoinList");
+const Huobi = require("./huobiws");
 
 const coinEmitter = new Emitter();
 let rmbPrice = 0;
 const coinInfo = new Map();
-CoinCodes.forEach((o, index) => {
-  coinInfo.set(index, o);
-});
 
-let gateDepth = new Depth();
+let huobiTraders = [];
+
 // eslint-disable-next-line require-jsdoc
 function socket_send_cmd(clientId, socket, cmd, params) {
   if (!params) params = [];
@@ -56,9 +54,8 @@ class MarketData {
             },
           ]);
         } catch (error) {
-          console.log(error.message,JSON.stringify(obj))
+          console.log(error.message, JSON.stringify(obj));
         }
-        
       }
 
       if (obj.id === 1000000) {
@@ -82,18 +79,22 @@ class MarketData {
 
 const marketData = new MarketData(() => {
   marketData.queryDepth(1000000, `USDT_CNYX`);
-  setTimeout(
-    () =>
-      setInterval(
-        () =>
-          coinInfo.forEach((value, key) => {
-            marketData.queryDepth(key, `${value}_USDT`);
-            marketData.queryDepth(1000000, `USDT_CNYX`);
-          }),
-        1000,
-      ),
-    1000,
-  );
+  setInterval(() => marketData.queryDepth(1000000, `USDT_CNYX`), 1000);
+});
+
+const huobi = new Huobi(() => {
+  setTimeout(() => {
+    CoinCodes.forEach((o) => {
+      huobi.subDepth(`${o}usdt`.toLocaleLowerCase(), (data) => {
+        coinEmitter.emit("insert", [
+          {
+            code: o,
+            data: [data.data[0].price, data.data[0].price * rmbPrice],
+          },
+        ]);
+      });
+    });
+  }, 2000);
 });
 
 module.exports = {

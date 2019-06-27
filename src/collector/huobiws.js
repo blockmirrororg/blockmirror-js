@@ -1,13 +1,9 @@
 const WebSocket = require('ws')
 const pako = require('pako')
-const Emitter = require("events")
-const CoinCodes = require("../../CoinList");
-
-const coinEmitter = new Emitter();
 const WS_URL = 'wss://api.huobi.pro/ws'
 
 // eslint-disable-next-line require-jsdoc
-class Huobi {
+module.exports = class Huobi {
   // eslint-disable-next-line require-jsdoc
   constructor(openCB) {
     this.handles = new Map()
@@ -56,43 +52,15 @@ class Huobi {
   subDepth(piars, cb) {
     this.ws.send(
       JSON.stringify({
-        sub: `market.${piars}.depth.step0`,
+        sub: `market.${piars}.trade.detail`,
         id: piars
       })
     )
 
-    this.handles.set(`depth_${piars}`, cb)
+    this.handles.set(`trade_${piars}`, cb)
 
     return () => {
-      this.handles.delete(`depth_${piars}`)
+      this.handles.delete(`trade_${piars}`)
     }
   }
 }
-
-
-const huobi = new Huobi(() => {
-  huobi.subDepth('eosusdt', async data => {
-    huobiDepth.asks = data.asks
-    huobiDepth.bids = data.bids
-
-    const result = CoinCodes.map((o) => {
-      return {
-        code: o,
-        data: [data[`${o}/USDT`].ask, rmbPrice.ask * data[`${o}/USDT`].ask],
-      };
-    });
-
-    coinEmitter.emit("insert", result);
-
-  })
-})
-
-
-module.exports = {
-  addListener(event, listener) {
-    coinEmitter.addListener(event, listener);
-    return () => {
-      coinEmitter.removeListener(event, listener);
-    };
-  },
-};
