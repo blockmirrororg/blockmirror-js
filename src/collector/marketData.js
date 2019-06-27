@@ -6,6 +6,7 @@ const Huobi = require("./huobiws");
 const coinEmitter = new Emitter();
 let rmbPrice = 0;
 const coinInfo = new Map();
+const result = new Map();
 
 let huobiTraders = [];
 
@@ -86,16 +87,21 @@ const huobi = new Huobi(() => {
   setTimeout(() => {
     CoinCodes.forEach((o) => {
       huobi.subDepth(`${o}usdt`.toLocaleLowerCase(), (data) => {
-        coinEmitter.emit("insert", [
-          {
-            code: o,
-            data: [data.data[0].price, data.data[0].price * rmbPrice],
-          },
-        ]);
+        result.set(o, [data.data[0].price, data.data[0].price * rmbPrice]);
       });
     });
   }, 2000);
 });
+
+setInterval(() => {
+  const data = [];
+  CoinCodes.forEach((o) => {
+    if (result.has(o)) {
+      data.push({ code: o, data: result.get(o) });
+    }
+  });
+  coinEmitter.emit("insert", data);
+}, 1000);
 
 module.exports = {
   addListener(event, listener) {
