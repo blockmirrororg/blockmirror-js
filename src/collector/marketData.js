@@ -65,10 +65,14 @@ class MarketData {
     });
 
     this.ws.on("close", () => {
-      throw new Error("gateio ws close");
+      setTimeout(() => {
+        throw new Error("gateio ws close");
+      });
     });
     this.ws.on("error", (err) => {
-      throw new Error("gateio ws error", err);
+      setTimeout(() => {
+        throw new Error("gateio ws close");
+      });
     });
   }
 
@@ -92,6 +96,7 @@ const huobi = new Huobi(() => {
     });
   }, 2000);
 });
+
 
 setInterval(() => {
   const data = [];
