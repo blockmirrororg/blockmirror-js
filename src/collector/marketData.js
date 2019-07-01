@@ -1,14 +1,10 @@
 const WS = require("ws");
 const Emitter = require("events");
 const CoinCodes = require("../../CoinList");
-const Huobi = require("./huobiws");
 
 const coinEmitter = new Emitter();
 let rmbPrice = 0;
-const coinInfo = new Map();
 const result = new Map();
-
-let huobiTraders = [];
 
 // eslint-disable-next-line require-jsdoc
 function socket_send_cmd(clientId, socket, cmd, params) {
@@ -37,25 +33,20 @@ class MarketData {
 
     this.ws.on("message", async (e) => {
       const obj = JSON.parse(e);
-
       if (obj.error) {
         console.log(JSON.stringify(obj.error));
         return;
       }
 
-      if (coinInfo.has(obj.id)) {
-        try {
-          coinEmitter.emit("insert", [
-            {
-              code: coinInfo.get(obj.id),
-              data: [
-                Number(obj.result.asks[0][0]),
-                rmbPrice * Number(obj.result.asks[0][0]),
-              ],
-            },
-          ]);
-        } catch (error) {
-          console.log(error.message, JSON.stringify(obj));
+      if (obj.method === "trades.update") {
+        if (
+          obj.params &&
+          obj.params instanceof Array &&
+          obj.params.length > 0
+        ) {
+          const coin = obj.params[0].split("_")[0];
+          const price = obj.params[1][0].price;
+          result.set(coin, [price, price * rmbPrice]);
         }
       }
 
@@ -84,19 +75,14 @@ class MarketData {
 
 const marketData = new MarketData(() => {
   marketData.queryDepth(1000000, `USDT_CNYX`);
+  socket_send_cmd(
+    10,
+    marketData.ws,
+    "trades.subscribe",
+    CoinCodes.map((o) => `${o.toLocaleUpperCase()}_USDT`),
+  );
   setInterval(() => marketData.queryDepth(1000000, `USDT_CNYX`), 1000);
 });
-
-const huobi = new Huobi(() => {
-  setTimeout(() => {
-    CoinCodes.forEach((o) => {
-      huobi.subDepth(`${o}usdt`.toLocaleLowerCase(), (data) => {
-        result.set(o, [data.data[0].price, data.data[0].price * rmbPrice]);
-      });
-    });
-  }, 2000);
-});
-
 
 setInterval(() => {
   const data = [];
