@@ -23,7 +23,7 @@ async function sendDataToBlock(datas) {
       for (let i = 0; i < args.length; i++) {
         buf.writeFloatLE(args[i], i * 4);
       }
-      results.add({
+      results.push({
         name: data.code,
         data: buf.toString("hex"),
       });
@@ -40,7 +40,7 @@ async function sendDataToBlock(datas) {
       for (let i = 0; i < args.length; i++) {
         buf.writeFloatLE(args[i], i * 4);
       }
-      results.add({
+      results.push({
         name: data.code,
         data: buf.toString("hex"),
       });
@@ -57,7 +57,7 @@ async function sendDataToBlock(datas) {
       for (let i = 0; i < args.length; i++) {
         buf.writeFloatLE(args[i], i * 4);
       }
-      results.add({
+      results.push({
         name: data.code,
         data: buf.toString("hex"),
       });
@@ -74,7 +74,7 @@ async function sendDataToBlock(datas) {
       for (let i = 0; i < args.length; i++) {
         buf.writeFloatLE(args[i], i * 4);
       }
-      results.add({
+      results.push({
         name: data.code,
         data: buf.toString("hex"),
       });
